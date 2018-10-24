@@ -1,0 +1,3 @@
+[submodule "third_party/densevid_eval"]
+	path = third_party/densevid_eval
+	url = git@github.com:ranjaykrishna/densevid_eval.git
