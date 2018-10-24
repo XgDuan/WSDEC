@@ -1,6 +1,6 @@
 # WSDEC
 This is the official repo for our NIPS paper [Weakly Supervised Dense Evente Captioning in Videos](https://nips.cc/Conferences/2018/Schedule?showEvent=113110000000).
-[](github_img/train.png)
+![](github_img/train.png)
 # Description
 
 ## Repo directories
@@ -116,6 +116,6 @@ You may encounter an cuda interal bug that says `Segmentation fault(cure dumped)
 You can download our pretrained model for evaluation or further usage from [our onedrive](https://1drv.ms/u/s!AjxjQIlQsEz1owg4VxbDG9ZY4Hxt), which includes a pretrained caption generator(cg_pretrain.ckp), a baseline model without classification loss(baseline_noclass.ckp), a baseline model without regression branch(baseline_noregress.ckp), and our final model(final_model.ckp).
 
 ## demo results
-[](github_img/demo.png)
+![](github_img/demo.png)
 
 # Cite the paper and give us star
