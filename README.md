@@ -12,7 +12,7 @@ This is the official repo for our NIPS paper [Weakly Supervised Dense Evente Cap
 + **./third_party**: third party dependency include the official evaluation scripts;
 + **./utils**: helper functions;
 + **./train_script**: all training scripts;
-+ **./eval_scripts**: all evalulating scripts.
++ **./eval_script**: all evalulating scripts.
 
 ## Dependency
 + Python 2.7
