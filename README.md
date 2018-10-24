@@ -10,7 +10,9 @@ This is the official repo for our NIPS paper [Weakly Supervised Dense Evente Cap
 + **./runs**: the default output dictionary used to store our trained model and result files;
 + **./scripts**: helper scripts;
 + **./third_party**: third party dependency include the official evaluation scripts;
-+ **./utils**: helper functions.
++ **./utils**: helper functions;
++ **./train_script**: all training scripts;
++ **./eval_scripts**: all evalulating scripts.
 
 ## Dependency
 + Python 2.7
@@ -53,20 +55,20 @@ There are two steps for model training: pretrain a not so bad caption model; and
 
 Our pretrained captioning model is trained.
 ```
-python train_cg_pretrain.py
+python train_script/train_cg_pretrain.py
 ```
 #### train our final model
 ```
-python train_final.py --checkpoint_cg YOUR_PRETRAINED_CAPTION_MODEL.ckp --alias MODEL_NAME
+python train_script/train_final.py --checkpoint_cg YOUR_PRETRAINED_CAPTION_MODEL.ckp --alias MODEL_NAME
 ```
 #### train baselines
 1. train the baseline model without classification loss.
 ```
-python train_baseline_regressor.py --checkpoint_cg YOUR_PRETRAINED_CAPTION_MODEL.ckp --alias MODEL_NAME
+python train_script/train_baseline_regressor.py --checkpoint_cg YOUR_PRETRAINED_CAPTION_MODEL.ckp --alias MODEL_NAME
 ```
 2. train the baseline model without regression branch.
 ```
-python train_final.py --checkpoint_cg YOUR_PRETRAINED_CAPTION_MODEL.ckp --regressor_scale 0 --alias MODEL_NAME
+python train_script/train_final.py --checkpoint_cg YOUR_PRETRAINED_CAPTION_MODEL.ckp --regressor_scale 0 --alias MODEL_NAME
 ```
 
 
@@ -77,17 +79,17 @@ All the arguments we use can be found in the corresponding training scripts. You
 Testing is much more than training. Firstly, in the process of training, our scripts will call the `densevid_eval` in a subprocess everytime after we run the `eval` function. From these results, you can have a general grasp about the final performance by just have a look at the `eval_results.txt` scripts. Secondly, after some epoches, you can run the evaluation scripts:
 1. evaluate the `full` model or `no_regression` model:
 ```
-python evaluate.py --checkpoint YOUR_TRAINED_MODEL.ckp
+python eval_script/evaluate.py --checkpoint YOUR_TRAINED_MODEL.ckp
 ```
 
 2. evaluate the `no_classification` model:
 ```
-python evaluate_baseline_regressor.py --checkpoint YOUR_TRAINED_MODEL.ckp
+python eval_script/evaluate_baseline_regressor.py --checkpoint YOUR_TRAINED_MODEL.ckp
 ```
 
 3. evaluate the `pretrained` model with random temporal segment:
 ```
-python evaluate_pretrain.py --checkpoint YOUR_PRETRAIN_CAPTION_MODEL.ckp
+python eval_script/evaluate_pretrain.py --checkpoint YOUR_PRETRAIN_CAPTION_MODEL.ckp
 ```
 
 ## Other usage
@@ -98,17 +100,20 @@ Besides reproduce our work, there are at least two interesting thing you can do 
 To know what is sentence localization, you can have a look at our paper `ABLR`.
 Note that our work at a matter of fact provides a unsupervised solution towards sentence localization, we introduce the usage for supervised model here. We have wrote the trainer, you can just run the following command and have a cup of coffee:
 ```
-python train_sl.py
+python train_script/train_sl.py
 ```
 
 ### Train a supervised video event caption generation model
 If you have read our paper, you would find that event captioning is the dual task of the aforementioned sentence localization task. To train such a model, just run the following command:
 ```
-python train_cg.py
+python train_script/train_cg.py
 ```
 
 ## BUGS
 You may encounter an cuda interal bug that says `Segmentation fault(cure dumped)` during training if you are using cuda 8.0. If such things happen, try upgrading your cuda to 9.0.
+
+## other
+We will add more description about how to use our code.
 
 # Trained model and results
 
