@@ -81,15 +81,6 @@ class CaptionEvaluator(object):
 
         approx_ground_truth = Variable(torch.from_numpy(np.array(scores).argmax(1)).cuda())
         return F.cross_entropy(sl_conf, approx_ground_truth)
-        score = torch.Tensor(scores)
-        #print(score)
-        #print(score)
-        max_score, _ = score.max(1)
-        max_index = score == max_score.unsqueeze(1).repeat(1, score.size(1))
-        # print(max_score)
-        approx_ground_truth = Variable(torch.multinomial(max_index.float(), 1).cuda()).squeeze(1).detach()
-        # print(approx_ground_truth)
-        return F.cross_entropy(sl_conf, approx_ground_truth)
 
 
 def pretrain_cg(model, data_loader, params, logger, step, optimizer):
