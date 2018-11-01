@@ -1,5 +1,5 @@
 # WSDEC
-This is the official repo for our NIPS paper [Weakly Supervised Dense Evente Captioning in Videos](https://nips.cc/Conferences/2018/Schedule?showEvent=113110000000).
+This is the official repo for our NIPS paper [Weakly Supervised Dense Event Captioning in Videos](https://nips.cc/Conferences/2018/Schedule?showEvent=113110000000).
 ![](github_img/demo.png)
 # Description
 
@@ -35,7 +35,7 @@ git clone --recurssive https://github.com/XgDuan/WSDEC
   + Download from the [official website](https://cs.stanford.edu/people/ranjaykrishna/densevid/);
     (Note, after you download the C3D features, you can either place it in the `data` folder and rename it as `anet_v1.3.c3d.hdf5`, or create a soft link in the data dictionary as `ln -s YOURC3DFeature data/anet_v1.3.c3d.hdf5`)
 + Download the dense video captioning data from the [official website](https://cs.stanford.edu/people/ranjaykrishna/densevid/);
-  (Similar with the C3D feature, you are supposed to place the download data in the `data` folder and rename it as `densecap`)
+  (Similar to the C3D feature, you are supposed to place the download data in the `data` folder and rename it as `densecap`)
 + Download the data for the official evaluation scripts `densevid_eval`;
   + run the command `sh download.sh` scripts in the folder `PREFIX/WSDEC/third_party/densevid_eval`;
 
@@ -76,7 +76,7 @@ python train_script/train_final.py --checkpoint_cg YOUR_PRETRAINED_CAPTION_MODEL
 All the arguments we use can be found in the corresponding training scripts. You can also use your own argumnets if you like to do so. But please mind, some arguments are discarded(This is our own reimplementation of our paper, the first version codes are too dirty that no one would like to use it.)
 
 ### Testing
-Testing is much more than training. Firstly, in the process of training, our scripts will call the `densevid_eval` in a subprocess everytime after we run the `eval` function. From these results, you can have a general grasp about the final performance by just have a look at the `eval_results.txt` scripts. Secondly, after some epoches, you can run the evaluation scripts:
+Testing is easier than training. Firstly, in the process of training, our scripts will call the `densevid_eval` in a subprocess every time after we run the `eval` function. From these results, you can have a general grasp about the final performance by just have a look at the `eval_results.txt` scripts. Secondly, after some epochs, you can run the evaluation scripts:
 1. evaluate the `full` model or `no_regression` model:
 ```
 python eval_script/evaluate.py --checkpoint YOUR_TRAINED_MODEL.ckp
@@ -92,13 +92,13 @@ python eval_script/evaluate_baseline_regressor.py --checkpoint YOUR_TRAINED_MODE
 python eval_script/evaluate_pretrain.py --checkpoint YOUR_PRETRAIN_CAPTION_MODEL.ckp
 ```
 
-## Other usage
-Besides reproduce our work, there are at least two interesting thing you can do with our codes.
+## Other usages
+Besides reproduce our work, there are at least two interesting things you can do with our codes.
 
 
 ### Train a supervised sentence localization model
 To know what is sentence localization, you can have a look at our paper `ABLR`.
-Note that our work at a matter of fact provides a unsupervised solution towards sentence localization, we introduce the usage for supervised model here. We have wrote the trainer, you can just run the following command and have a cup of coffee:
+Note that our work at a matter of fact provides an unsupervised solution towards sentence localization, we introduce the usage for the supervised model here. We have written the trainer, you can just run the following command and have a cup of coffee:
 ```
 python train_script/train_sl.py
 ```
@@ -110,10 +110,10 @@ python train_script/train_cg.py
 ```
 
 ## BUGS
-You may encounter an cuda interal bug that says `Segmentation fault(cure dumped)` during training if you are using cuda 8.0. If such things happen, try upgrading your cuda to 9.0.
+You may encounter a cuda internal bug that says `Segmentation fault(core dumped)` during training if you are using cuda 8.0. If such things happen, try upgrading your cuda to 9.0.
 
 ## other
-We will add more description about how to use our code. Please fell free to contact us if you have any questions or suggestions.
+We will add more description about how to use our code. Please feel free to contact us if you have any questions or suggestions.
 
 # Trained model and results
 
