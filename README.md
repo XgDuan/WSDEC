@@ -113,7 +113,7 @@ python train_script/train_cg.py
 You may encounter an cuda interal bug that says `Segmentation fault(cure dumped)` during training if you are using cuda 8.0. If such things happen, try upgrading your cuda to 9.0.
 
 ## other
-We will add more description about how to use our code.
+We will add more description about how to use our code. Please fell free to contact us if you have any questions or suggestions.
 
 # Trained model and results
 
