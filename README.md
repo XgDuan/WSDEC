@@ -121,4 +121,17 @@ We will add more description about how to use our code. Please feel free to cont
 You can download our pretrained model for evaluation or further usage from [our onedrive](https://1drv.ms/u/s!AjxjQIlQsEz1oxugOfa1ZOPktLTX), which includes a pretrained caption generator(cg_pretrain.ckp), a baseline model without classification loss(baseline_noclass.ckp), a baseline model without regression branch(baseline_noregress.ckp), and our final model(final_model.ckp).
 
 
-# Cite the paper and give us star
+# Cite the paper and give us star⭐️
+If you find our paper useful, please cite our paper using the following bintex:
+```
+@incollection{NIPS2018_7569,
+title = {Weakly Supervised Dense Event Captioning in Videos},
+author = {Duan, Xuguang and Huang, Wenbing and Gan, Chuang and Wang, Jingdong and Zhu, Wenwu and Huang, Junzhou},
+booktitle = {Advances in Neural Information Processing Systems 31},
+editor = {S. Bengio and H. Wallach and H. Larochelle and K. Grauman and N. Cesa-Bianchi and R. Garnett},
+pages = {3062--3072},
+year = {2018},
+publisher = {Curran Associates, Inc.},
+url = {http://papers.nips.cc/paper/7569-weakly-supervised-dense-event-captioning-in-videos.pdf}
+}
+```
