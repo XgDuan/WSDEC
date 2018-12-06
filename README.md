@@ -122,7 +122,7 @@ You can download our pretrained model for evaluation or further usage from [our 
 
 
 # Cite the paper and give us star⭐️
-If you find our paper useful, please cite our paper using the following bintex:
+If you find our paper or code useful, please cite our paper using the following bibtex:
 ```
 @incollection{NIPS2018_7569,
 title = {Weakly Supervised Dense Event Captioning in Videos},
