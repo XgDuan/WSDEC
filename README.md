@@ -55,7 +55,7 @@ There are two steps for model training: pretrain a not so bad caption model; and
 
 Our pretrained captioning model is trained.
 ```
-python train_script/train_captionmodel_pretrain.py
+python train_script/train_cg_pretrain.py
 ```
 #### train our final model
 ```
