@@ -1,5 +1,5 @@
 # WSDEC
-This is the official repo for our NIPS paper [Weakly Supervised Dense Event Captioning in Videos](https://nips.cc/Conferences/2018/Schedule?showEvent=113110000000).
+This is the official repo for our NIPS paper [Weakly Supervised Dense Event Captioning in Videos](http://papers.nips.cc/paper/7569-weakly-supervised-dense-event-captioning-in-videos).
 ![](github_img/train.png)
 # Description
 
