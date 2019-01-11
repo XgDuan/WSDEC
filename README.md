@@ -27,7 +27,7 @@ Before the training and testing, we should make sure the data, third party data 
 
 **1. Clone our repo and submodules**
 ```
-git clone --recursive ` https://github.com/XgDuan/WSDEC
+git clone --recursive https://github.com/XgDuan/WSDEC
 ```
 
 **2. Download all the data**
