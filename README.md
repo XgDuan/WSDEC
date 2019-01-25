@@ -1,5 +1,5 @@
 # WSDEC
-This is the official repo for our NIPS paper [Weakly Supervised Dense Event Captioning in Videos](http://papers.nips.cc/paper/7569-weakly-supervised-dense-event-captioning-in-videos).
+This is the official repo for our NeurIPS paper [Weakly Supervised Dense Event Captioning in Videos](http://papers.nips.cc/paper/7569-weakly-supervised-dense-event-captioning-in-videos).
 ![](github_img/train.png)
 # Description
 
@@ -16,7 +16,8 @@ This is the official repo for our NIPS paper [Weakly Supervised Dense Event Capt
 
 ## Dependency
 + Python 2.7
-+ **CUDA 0.9**(note: you will encounter a bug saying `segmentation fault(core dump)` if you run our code with CUDA 8.0)
++ **CUDA 9.0**(note: you will encounter a bug saying `segmentation fault(core dump)` if you run our code with CUDA 8.0)
+  + But it seems that the bug still exist. See [issue](https://github.com/XgDuan/WSDEC/issues/5)
 + [Pytorch 3.1](note: 3.1 is not compatible with newer version)
 + numpy, hdf5 and other necessary packages(no special requirement)
 
