@@ -473,7 +473,7 @@ if __name__ == '__main__':
                         help='folder where models are saved')
     parser.add_argument('--gpu_id', type=int, default=-1,
                         help='the id of gup used to train the model, -1 means automatically choose the best one')
-    parser.add_argument('--training_epoch', type=int, default=100,
+    parser.add_argument('--training_epoch', type=int, default=25,
                         help='training epochs in total')
     parser.add_argument('--batch_size', type=int, default=32,  # 32 encounters oom
                         help='batch size used to train the model')
