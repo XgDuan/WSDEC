@@ -176,6 +176,7 @@ def main(params):
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
                                                         milestones=params['lr_step'], gamma=params["lr_decay_rate"])
     eval(model, val_loader, params, logger, 0, saver)
+    exit()
     for step in range(params['training_epoch']):
         lr_scheduler.step()
         train(model, train_loader, params, logger, step, optimizer)
