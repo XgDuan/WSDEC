@@ -18,7 +18,7 @@ This is the official repo for our NeurIPS paper [Weakly Supervised Dense Event C
 + Python 2.7
 + **CUDA 9.0**(note: you will encounter a bug saying `segmentation fault(core dump)` if you run our code with CUDA 8.0)
   + But it seems that the bug still exists. See [issue](https://github.com/XgDuan/WSDEC/issues/5)
-+ [Pytorch 3.1](note: 3.1 is not compatible with newer version)
++ [Pytorch 0.3.1](note: 0.3.1 is not compatible with newer version)
 + numpy, hdf5 and other necessary packages(no special requirement)
 
 ## Usage for reproduction
