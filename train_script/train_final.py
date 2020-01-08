@@ -14,9 +14,6 @@ from model.caption_generator import CaptionGenerator
 from model.sentence_localizer import SentenceLocalizer
 from utils.helper_function import *
 
-
-
-
 sys.path.append('./third_party/densevid_eval/coco-caption')
 
 from pycocoevalcap.tokenizer.ptbtokenizer import PTBTokenizer
@@ -65,14 +62,12 @@ class CaptionEvaluator(object):
         cur_res = {}
         cur_gts = {}
         for idxi, gts_caption in enumerate(sent_gd):
-            cur_gts[idxi] = [{'caption': remove_nonascii(self.rtranslator.rtranslate(gts_caption.cpu().data.numpy()))}]
+            cur_gts[idxi] = [remove_nonascii(self.rtranslator.rtranslate(gts_caption.cpu().data.numpy()))]
             for idxj in range(n_anchors):
-                cur_res[idxi*n_anchors+idxj] = [{'caption': remove_nonascii(self.rtranslator.rtranslate(sent_pred[idxi, idxj].cpu().data.numpy()))}]
-        tokenize_res = self.tokenizer.tokenize(cur_res)
-        tokenize_gts = self.tokenizer.tokenize(cur_gts)
+                cur_res[idxi*n_anchors+idxj] = [remove_nonascii(self.rtranslator.rtranslate(sent_pred[idxi, idxj].cpu().data.numpy()))]
 
-        res = {i: {j: tokenize_res[i*n_anchors+j] for j in range(n_anchors)} for i in range(sent_gd.size(0))}
-        gts = {i: {j: tokenize_gts[i] for j in range(n_anchors)} for i in range(sent_gd.size(0))}
+        res = {i: {j: cur_res[i*n_anchors+j] for j in range(n_anchors)} for i in range(sent_gd.size(0))}
+        gts = {i: {j: cur_gts[i] for j in range(n_anchors)} for i in range(sent_gd.size(0))}
 
         scores = []
         for i in range(sent_gd.size(0)):
@@ -400,8 +395,8 @@ def main(params):
             train_sl(model_cg, model_sl, train_loader_sl, evaluator, params, logger, step, optimizer_sl)
 
         # validation and saving
-        # if step % params['test_interval'] == 0:
-        #     eval(model_sl, model_cg, val_loader, logger, saver, params, step)
+        if step % params['test_interval'] == 0:
+            eval(model_sl, model_cg, val_loader, logger, saver, params, step)
         if step % params['save_model_interval'] == 0 and step != 0:
             saver.save_model(model_sl, step, {'step': step, 'model_sl': model_sl.state_dict(), 'model_cg': model_cg.state_dict()})
 

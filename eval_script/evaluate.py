@@ -11,7 +11,7 @@ from dataset import ANetDataFull, collate_fn
 from utils.helper_function import *
 
 from model.caption_generator import CaptionGenerator
-from model.sentence_localizer_times import SentenceLocalizer
+from model.sentence_localizer import SentenceLocalizer
 
 
 

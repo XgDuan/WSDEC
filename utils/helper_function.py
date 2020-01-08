@@ -4,26 +4,30 @@ from global_config import *
 from torch.autograd import Variable
 import os
 import random
+
+
 def set_device(logger, id=-1):
     logger.info('*' * 100)
 
     if id == -1:
-        tmp_file_name = 'tmp%s'%(random.random())
-        os.system('nvidia-smi -q -d Memory |grep -A4 GPU|grep Free >%s'%(tmp_file_name))
-        memory_gpu=[int(x.split()[2]) for x in open(tmp_file_name,'r').readlines()]
+        tmp_file_name = 'tmp%s' % (random.random())
+        os.system('nvidia-smi -q -d Memory |grep -A4 GPU|grep Free >%s' % (tmp_file_name))
+        memory_gpu = [int(x.split()[2]) for x in open(tmp_file_name, 'r').readlines()]
         id = np.argmax(memory_gpu)
-        os.system('rm %s'%(tmp_file_name))
+        os.system('rm %s' % (tmp_file_name))
 
     logger.info('process runs on gpu %d', id)
     os.environ['CUDA_VISIBLE_DEVICES'] = str(id)
-    logger.info('*'*100)
+    logger.info('*' * 100)
     return id
+
 
 def param_refine(param, old_param):
     refine_dict = ['vocab_size', 'vocab_embedding_dim', 'hidden_len', 'feature_dim', 'rnn_layer',
                    'video_sample_rate']
     for key in refine_dict:
         param[key] = old_param[key]
+
 
 def model_initialize(model, logger):
     for name, param in model.named_parameters():
@@ -34,6 +38,7 @@ def model_initialize(model, logger):
             logger.info('initialized with constant 0: %s', name)
             torch.nn.init.constant(param, 0)
 
+
 def hidden_transpose(hidden):
     """
     :param hidden: (~, batch_size, hidden_dim)
@@ -42,17 +47,19 @@ def hidden_transpose(hidden):
     """
     return hidden.transpose(0, 1).contiguous().view(hidden.size(1), -1)
 
+
 def se2cw(se):
     """
     :param se: (batch, 2)
     :return:
         cw: (batch, 2)
     """
-    s, e = se.chunk(2, dim=1) # batch, 1
+    s, e = se.chunk(2, dim=1)  # batch, 1
     return torch.cat([(s + e) / 2, e - s], dim=1)
     # _w = s - e
     # _w_delta = torch.zeros_like(_w) + DELTA
     # return torch.cat([(s + e) / 2, torch.max(_w, _w_delta)], dim=1)
+
 
 def cw2se(cw):
     """

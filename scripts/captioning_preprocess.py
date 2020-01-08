@@ -56,7 +56,7 @@ def main(params):
         'word_to_id': word_to_id,
         'id_to_word': id_to_word
     }
-    pickle.dump(translator, open(params['out_path'], 'w'))
+    pickle.dump(translator, open(params['out_path'] + str(params['vocab_size']) + '.pkl', 'w'))
 
 
 if __name__ == "__main__":
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # input json
     parser.add_argument('--input_json', type=str, default='data/densecap/train.json',
                         help='anet captioning data')
-    parser.add_argument('--out_path', type=str, default='data/translator.pkl',
+    parser.add_argument('--out_path', type=str, default='data/translator',
                         help='captioning dict between words and indexes')
     parser.add_argument('--vocab_size', type=int, default=6000,
                         help='vocabulary size used in final model')
