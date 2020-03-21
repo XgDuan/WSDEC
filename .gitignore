@@ -1,0 +1,7 @@
+.vscode
+final_results
+*.pyc
+env
+*.ckp
+data
+runs
