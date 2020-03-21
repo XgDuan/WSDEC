@@ -101,9 +101,12 @@ def temporal_segment_merge(ts1, ts2):
     :param ts2:  (2,) se format
     :return:
     """
-    s, _ = torch.cat([ts1[0], ts2[0]], dim=0).min(0)
-    e, _ = torch.cat([ts1[1], ts2[1]], dim=0).max(0)
-    return torch.cat([s,e], dim=0)
+    # import pdb; pdb.set_trace()
+    s = torch.min(ts1[0], ts2[0])
+    e = torch.max(ts1[1], ts2[1])
+    # s, _ = torch.cat([ts1[0], ts2[0]], dim=0).min(0)
+    # e, _ = torch.cat([ts1[1], ts2[1]], dim=0).max(0)
+    return torch.stack([s, e], dim=0)
 
 
 def refine_temporal_segment(ts_old, ts_new, ts_gather_idx, iou_thres):
@@ -121,18 +124,18 @@ def refine_temporal_segment(ts_old, ts_new, ts_gather_idx, iou_thres):
     ts_new_gather_idx = list()
 
     for idx1, idx2 in enumerate(ts_gather_idx.cpu().data.numpy().tolist()):
-        if compute_iou(ts_new_se[idx1].unsqueeze(0), ts_old_se[idx1].unsqueeze(0)).mean().cpu().data[0] > 0.2:
+        if compute_iou(ts_new_se[idx1].unsqueeze(0), ts_old_se[idx1].unsqueeze(0)).mean().cpu().item() > 0.2:
             continue
         if idx2 not in ts_refined:
-            ts_refined[idx2] = [ts_new_se[idx1], ]  # add the first one as default
-            # ts_refined[idx2] = [Variable(FloatTensor([0, 1-DELTA])), ]  # add [0, 1] to avoid empty set
+            # ts_refined[idx2] = [ts_new_se[idx1], ]  # add the first one as default
+            ts_refined[idx2] = [Variable(FloatTensor([0, 1-DELTA])), ]  # add [0, 1] to avoid empty set
             ts_new_gather_idx.append(idx2)
         else:
             ts_temp1 = torch.stack(ts_refined[idx2], dim=0)
             ts_temp2 = ts_new_se[idx1].unsqueeze(0).expand_as(ts_temp1)
             ious = compute_iou(ts_temp1, ts_temp2)  # batch
             max_iou, max_iou_idx = ious.max(0)
-            max_iou, max_iou_idx = max_iou.cpu().data[0], max_iou_idx.cpu().data[0]
+            max_iou, max_iou_idx = max_iou.cpu().item(), max_iou_idx.cpu().item()
             if max_iou > iou_thres:
                 ts_refined[idx2][max_iou_idx] = temporal_segment_merge(ts_new_se[idx1], ts_refined[idx2][max_iou_idx])
             else:

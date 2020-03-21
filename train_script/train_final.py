@@ -12,6 +12,7 @@ from utils.model_saver import ModelSaver
 from dataset import ANetDataFull, ANetDataSample, collate_fn
 from model.caption_generator import CaptionGenerator
 from model.sentence_localizer import SentenceLocalizer
+from metrics.metrics import CaptionEvaluator
 from utils.helper_function import *
 
 sys.path.append('./third_party/densevid_eval/coco-caption')
@@ -22,61 +23,6 @@ from pycocoevalcap.meteor.meteor import Meteor
 
 def remove_nonascii(text):
     return ''.join([i if ord(i) < 128 else ' ' for i in text])
-
-
-class CaptionEvaluator(object):
-
-    def __init__(self, rtranslator):
-        self.tokenizer = PTBTokenizer()
-        self.scorer = Meteor()
-        self.rtranslator = rtranslator
-
-    def evaluate(self, gts, res):
-        _, scores = self.scorer.compute_score(gts, res)
-        return scores
-
-    def build_loss(self, sl_conf, video_feat, video_len, video_mask, sent_gd, model_cg):
-        """
-        param input_caption
-        """
-        return self.build_loss_v1(sl_conf, video_feat, video_len, video_mask, sent_gd, model_cg)
-
-    def build_loss_v1(self, sl_conf, video_feat, video_len, video_mask, sent_gd, model_cg):
-        """
-        :param sl_conf:         (batch, n_anchor)
-        :param sl_gather_idx:   (batch, )
-        :param video_feat:      (batch, ~, ~)
-        :param video_len:       (batch, 2)
-        :param video_mask:      (batch, ~, 1)
-        :param model_cg:
-        :return:
-        """
-        initial_anchors = params['anchor_list']
-        n_anchors = len(initial_anchors)
-
-        batch_size = video_feat.size(0)
-        ts_seq = Variable(FloatTensor(initial_anchors).repeat(batch_size, 1))
-        ts_gather_idx = Variable(LongTensor(range(batch_size)).unsqueeze(1).repeat(1, n_anchors).view(-1))
-        _, sent_pred, sent_len, sent_mask = model_cg.forward(video_feat, video_len, video_mask, ts_seq, ts_gather_idx)
-        sent_pred = sent_pred.view(batch_size, n_anchors, -1)
-        cur_res = {}
-        cur_gts = {}
-        for idxi, gts_caption in enumerate(sent_gd):
-            cur_gts[idxi] = [remove_nonascii(self.rtranslator.rtranslate(gts_caption.cpu().data.numpy()))]
-            for idxj in range(n_anchors):
-                cur_res[idxi*n_anchors+idxj] = [remove_nonascii(self.rtranslator.rtranslate(sent_pred[idxi, idxj].cpu().data.numpy()))]
-
-        res = {i: {j: cur_res[i*n_anchors+j] for j in range(n_anchors)} for i in range(sent_gd.size(0))}
-        gts = {i: {j: cur_gts[i] for j in range(n_anchors)} for i in range(sent_gd.size(0))}
-
-        scores = []
-        for i in range(sent_gd.size(0)):
-            score = self.evaluate(gts[i], res[i])
-            scores.append(score)
-
-        approx_ground_truth = Variable(torch.from_numpy(np.array(scores).argmax(1)).cuda())
-        return F.cross_entropy(sl_conf, approx_ground_truth)
-
 
 def pretrain_cg(model, data_loader, params, logger, step, optimizer):
     model.train()
@@ -177,12 +123,12 @@ def train_cg(model_cg, model_sl, data_loader, params, logger, step, optimizer):
         optimizer.step()
 
         # statics
-        accumulate_loss += loss.cpu().data[0]
+        accumulate_loss += loss.cpu().item()
         if params['batch_log_interval'] != -1 and idx % params['batch_log_interval'] == 0:
             logger.info('train: epoch[%05d], batch[%04d/%04d], elapsed time=%0.4fs, loss: %06.6f, %06.6f',
             # logger.info('train: epoch[%05d], batch[%04d/%04d], elapsed time=%0.4fs, loss: %06.6f',
                         # step, idx, len(data_loader), time.time() - batch_time, loss.cpu().data[0])
-                        step, idx, len(data_loader), time.time() - batch_time, loss.cpu().data[0], loss_lgl.cpu().data[0])
+                        step, idx, len(data_loader), time.time() - batch_time, loss.cpu().item(), loss_lgl.cpu().item())
 
     logger.info('epoch [%05d]: elapsed time:%0.4fs, avg loss: %06.6f',
                 step, time.time() - _start_time, accumulate_loss / len(data_loader))
@@ -228,11 +174,11 @@ def train_sl(model_cg, model_sl, data_loader, evaluator, params, logger, step, o
 
         # statics
         miou = model_sl.compute_mean_iou(pred_time.data, ts_time.data)
-        accumulate_loss += loss.cpu().data[0]
+        accumulate_loss += loss.cpu().item()
         accumulate_iou += miou
         if params['batch_log_interval'] != -1 and idx % params['batch_log_interval'] == 0:
             logger.info('train: epoch[%05d], batch[%04d/%04d], elapsed time=%0.4fs, loss: %06.6f, miou: %06.6f',
-                        step, idx, len(data_loader), time.time() - batch_time, loss.cpu().data[0], miou)
+                        step, idx, len(data_loader), time.time() - batch_time, loss.cpu().item(), miou)
     logger.info('epoch [%05d]: elapsed time:%0.4fs, avg loss: %06.6f, miou: %06.6f',
                 step, time.time() - _start_time, accumulate_loss / len(data_loader), accumulate_iou / len(data_loader))
     logger.info('*'*80)
@@ -380,7 +326,7 @@ def main(params):
     lr_scheduler_cg = torch.optim.lr_scheduler.MultiStepLR(optimizer_cg,
                                                         milestones=params['lr_step'], gamma=params["lr_decay_rate"])
 
-    evaluator = CaptionEvaluator(training_set)
+    evaluator = CaptionEvaluator(training_set, params)
     saver.save_model(model_sl, 0, {'step': 0, 'model_sl': model_sl.state_dict(), 'model_cg': model_cg.state_dict()})
     # eval(model_sl, model_cg, val_loader, logger, saver, params, -1)
     for step in range(params['training_epoch']):
@@ -468,7 +414,7 @@ if __name__ == '__main__':
                         help='folder where models are saved')
     parser.add_argument('--gpu_id', type=int, default=-1,
                         help='the id of gup used to train the model, -1 means automatically choose the best one')
-    parser.add_argument('--training_epoch', type=int, default=25,
+    parser.add_argument('--training_epoch', type=int, default=100,
                         help='training epochs in total')
     parser.add_argument('--batch_size', type=int, default=32,  # 32 encounters oom
                         help='batch size used to train the model')
@@ -498,7 +444,7 @@ if __name__ == '__main__':
                         help='alias used in model/checkpoint saver')
     parser.add_argument('--pretrain_epoch', type=int, default=0,
                         help='pretrain with fake01')
-    parser.add_argument('--lr_step', type=int, nargs='+', default=[1, 2, 20],
+    parser.add_argument('--lr_step', type=int, nargs='+', default=[10, 20, 30],
                         help='lr_steps used to decay the learning_rate')
 
     parser.add_argument('--refine_round', type=int, default=1,

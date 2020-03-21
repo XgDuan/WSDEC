@@ -182,7 +182,6 @@ class SentenceLocalizer(nn.Module):
             },
         ]
 
-
     def get_parameter_group_c(self, params):
         # return [
         #     {'name': 'sl_regressor',
@@ -281,8 +280,8 @@ class SentenceLocalizer(nn.Module):
         :return:
             miou: scalar
         """
-        assert not isinstance(seg1, Variable)
-        assert not isinstance(seg2, Variable)
+        # assert not isinstance(seg1, Variable)
+        # assert not isinstance(seg2, Variable)
         seg1_s, seg1_e = seg1.chunk(2, dim=1)  # batch, 1
         seg2_s, seg2_e = seg2.chunk(2, dim=1)  # batch, 1
         min_end, _ = torch.cat([seg1_e, seg2_e], dim=1).min(1)  # batch

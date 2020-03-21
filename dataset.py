@@ -80,7 +80,7 @@ class ANetData(Dataset):
         # we should initialize the file handle in the subprocess (otherwise we will encounter bugs when using more than one workers)
         self.feature_file.close()
         self.feature_file = feature_file
-        
+
         self.translator = pickle.load(open(translator_pickle, 'r'))
         self.translator['word_to_id'] = defaultdict(lambda: len(self.translator['id_to_word'])-1,
                                                     self.translator['word_to_id'])
@@ -129,7 +129,7 @@ class ANetDataFull(ANetData):
 
     def __getitem__(self, idx):
         if isinstance(self.feature_file, str):
-            self.feature_file = h5py.File(feature_file, 'r')
+            self.feature_file = h5py.File(self.feature_file, 'r')
         key = str(self.keys[idx])
         feature_obj = self.feature_file[key]['c3d_features']
         feature_obj = feature_obj[::self.sample_rate, :]
@@ -151,7 +151,7 @@ class ANetDataSample(ANetData):
 
     def __getitem__(self, idx):
         if isinstance(self.feature_file, str):
-            self.feature_file = h5py.File(feature_file, 'r')
+            self.feature_file = h5py.File(self.feature_file, 'r')
         key = str(self.keys[idx])
         feature_obj = self.feature_file[key]['c3d_features']
         feature_obj = feature_obj[::self.sample_rate, :]

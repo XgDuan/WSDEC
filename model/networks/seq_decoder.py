@@ -109,7 +109,6 @@ class RNNSeqDecoder(nn.Module):
 
         # forward beam_search
         for step in range(1, self.max_cap_length + 1):  # the first word is said to be <bos>
-
             input_word_embedding = self.embedding(next_input_word).unsqueeze(1)  # batch*beam_size, embedding_dim
 
             context = self.attention_module(encoder_output, hidden_transpose(hidden), temp_seg, encoding_mask)
@@ -129,7 +128,7 @@ class RNNSeqDecoder(nn.Module):
             out_pred_target_list.append(next_input_word.view(batch_size, beam_size))
             out_pred_parent_list.append(parents)
 
-            end_mask = next_input_word.data.eq(EOS_ID)
+            end_mask = next_input_word.data.eq(EOS_ID).view(batch_size, beam_size)
             if end_mask.nonzero().dim() > 0:
                 stored_scores = current_scores.clone()
                 current_scores.data.masked_fill_(end_mask, -float('inf'))
@@ -145,7 +144,9 @@ class RNNSeqDecoder(nn.Module):
         for step in range(self.max_cap_length, 0, -1):
             if step in candidate_score_dict:  # we find end index
                 max_score, true_idx = torch.cat([candidate_score_dict[step], max_score.unsqueeze(1)], dim=1).max(1)  # beam_size + 1
+                true_idx = true_idx.unsqueeze(1)
                 current_idx[true_idx != beam_size] = true_idx[true_idx != beam_size]
+                true_idx = true_idx.squeeze(1)
                 seq_length[true_idx != beam_size] = 0
             final_pred.append(out_pred_target_list[step].gather(dim=1, index=current_idx))  # batch, 1
             current_idx = out_pred_parent_list[step].gather(dim=1, index=current_idx)  # batch, 1
